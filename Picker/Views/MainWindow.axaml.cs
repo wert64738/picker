@@ -25,14 +25,13 @@ namespace Picker.Views
         }
 
         private CancellationTokenSource? _cancellationTokenSource;
-        private bool isLiveViewLocked = false;  // Flag to lock live view
+        private bool isLiveViewLocked = false;
 
         public MainWindow()
         {
             InitializeComponent();
             StartLiveView();
 
-            // Attach KeyDown event handler to capture key presses while in focus
             this.KeyDown += (sender, e) =>
             {
                 if (e.Key == Avalonia.Input.Key.F)
@@ -43,12 +42,11 @@ namespace Picker.Views
                 }
             };
 
-            // Attach PointerPressed event handler programmatically
             this.AddHandler(PointerPressedEvent, (sender, e) =>
             {
                 if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
                 {
-                    BeginMoveDrag(e);  // No parameters needed
+                    BeginMoveDrag(e);
                 }
             });
         }
@@ -59,7 +57,6 @@ namespace Picker.Views
             base.OnClosed(e);
         }
 
-        // Handle arrow keys to nudge the mouse pointer
         protected override void OnKeyDown(KeyEventArgs e)
         {
             base.OnKeyDown(e);
@@ -95,46 +92,36 @@ namespace Picker.Views
                 {
                     if (!isLiveViewLocked && GetCursorPos(out POINT point))
                     {
-                        // Capture an 11x11 area around the cursor for a clear center pixel
                         using var bmp = new Bitmap(11, 11);
                         using var gfx = Graphics.FromImage(bmp);
                         gfx.CopyFromScreen(point.X - 5 - 2, point.Y - 5 - 2, 0, 0, new System.Drawing.Size(11, 11));
 
 
-                        // Get the center pixel color (5,5 is the center of an 11x11 area)
                         var centerColor = bmp.GetPixel(5, 5);
 
-                        // Create a 4x expanded bitmap for the live view
                         using var zoomedBmp = new Bitmap(44, 44);
                         using (var gfxZoom = Graphics.FromImage(zoomedBmp))
                         {
-                            // Make lines crisp and disable anti-aliasing
                             gfxZoom.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
-                            gfxZoom.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.None;  // Fix blurriness
+                            gfxZoom.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.None;
                             gfxZoom.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
 
-                            // Draw zoomed-in image
                             gfxZoom.DrawImage(bmp, new Rectangle(0, 0, 44, 44), new Rectangle(0, 0, 11, 11), GraphicsUnit.Pixel);
 
                             using var pen = new System.Drawing.Pen(System.Drawing.Color.Red, 1)
                             {
-                                Alignment = System.Drawing.Drawing2D.PenAlignment.Center  // Center alignment for crisp lines
+                                Alignment = System.Drawing.Drawing2D.PenAlignment.Center
                             };
 
-                            // Draw a 3x3 red box centered on the middle pixel (22, 22 is the center for 44x44 image)
                             gfxZoom.DrawRectangle(pen, 18, 18, 3, 3);
                         }
 
-                        // Convert to Avalonia Bitmap
                         var avaloniaBitmap = ConvertToAvaloniaBitmap(zoomedBmp);
 
-                        // Update UI on the main thread
                         await Dispatcher.UIThread.InvokeAsync(() =>
                         {
-                            // Update live view image
                             LiveViewImage.Source = avaloniaBitmap;
 
-                            // Update color and coordinate information
                             XCoordText.Text = point.X.ToString();
                             YCoordText.Text = point.Y.ToString();
 
@@ -144,7 +131,7 @@ namespace Picker.Views
                         });
                     }
 
-                    await Task.Delay(10);  // Adjust delay for smoother/faster updates
+                    await Task.Delay(32);
                 }
             }, token);
         }
