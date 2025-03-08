@@ -1,0 +1,38 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Picker.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:views="clr-namespace:Picker.Views"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="Picker.Views.MainWindow"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Picker"
+        Background="Gray"
+		Height="220" MinHeight="220" MaxHeight="220"
+        Width="100" MinWidth="100" MaxWidth="100">
+	<!-- Fixed width at 100 pixels -->
+
+	<views:MainView Cursor="Cross">
+		<StackPanel Margin="5">
+			<!-- Reduced margin for narrow width -->
+
+			<!-- X and Y coordinates on the same row -->
+			<StackPanel Orientation="Horizontal" Margin="0,0,0,5" HorizontalAlignment="Center">
+				<TextBlock Text="X:" FontWeight="Bold" Margin="0,0,2,0"/>
+				<TextBlock Name="XCoordText" Text="0" Margin="0,0,5,0"/>
+				<TextBlock Text="Y:" FontWeight="Bold" Margin="0,0,2,0"/>
+				<TextBlock Name="YCoordText" Text="0"/>
+			</StackPanel>
+
+			<!-- Color Preview and Info -->
+			<Border Name="ColorPreviewLarge" Width="60" Height="60" BorderBrush="Black" BorderThickness="1" Margin="0,5,0,5"/>
+			<TextBlock Name="RGBValuesText" Text="R:0 G:0 B:0" Margin="0,0,0,2" FontSize="10" HorizontalAlignment="Center"/>
+			<TextBlock Name="ColorHexText" Text="#000000" Margin="0,0,0,5" FontSize="10" HorizontalAlignment="Center"/>
+
+			<!-- Live View -->
+			<Image Name="LiveViewImage" Width="80" Height="80" Stretch="Uniform"/>
+
+		</StackPanel>
+	</views:MainView>
+</Window>
